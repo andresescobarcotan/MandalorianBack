@@ -1,15 +1,13 @@
 package com.charla.mandalorian.infrastructure;
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
 
 import org.springframework.stereotype.Repository;
 
@@ -33,13 +31,10 @@ public class ImageRepositoryImpl implements ImageRepository {
 
 		if(idCamera!=null) {
 			String fileName = imageRepository.get(idCamera)==null?TEST_FILE:imageRepository.get(idCamera);
-			 URL resource = classLoader.getResource(fileName);
-			 File file;
-			 System.out.println(fileName);
+			 System.out.println("src/main/resources/"+fileName);
 			try {
-				file = new File(resource.toURI());
-				fileRead = Files.readAllBytes(file.toPath());
-			} catch (URISyntaxException | IOException e) {
+				fileRead =ImageRepositoryImpl.class.getClassLoader().getResourceAsStream(fileName).readAllBytes();
+			} catch (IllegalArgumentException|IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -53,14 +48,13 @@ public class ImageRepositoryImpl implements ImageRepository {
 	@Override
 	public void createImage(String idCamera, String fileName, byte[] image) {
 		ClassLoader classLoader = getClass().getClassLoader();
-		
+
 			File file;
 			try {
 				file = new File("src/main/resources/"+fileName);
-				
-				FileOutputStream fos = new FileOutputStream(file);
-			  fos.write(image);
-			  fos.close();
+			try(FileOutputStream fos = new FileOutputStream(file)){
+				fos.write(image);
+			}
 			  imageRepository.put(idCamera, fileName);
 		  } catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
