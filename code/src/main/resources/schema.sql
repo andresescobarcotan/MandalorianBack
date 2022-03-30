@@ -1,0 +1,6 @@
+CREATE TABLE country (
+    id   INTEGER      NOT NULL AUTO_INCREMENT,
+    name VARCHAR(128) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE images (    name VARCHAR(128) NOT NULL, image BLOB, PRIMARY KEY (name));
